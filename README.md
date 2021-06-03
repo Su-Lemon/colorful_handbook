@@ -10,7 +10,7 @@
 
    `cd .../socketserver` 
 
-   `java SocketServerMain`v 
+   `java SocketServerMain` 
 
    提示“wait for connection”则服务器启动成功
 
