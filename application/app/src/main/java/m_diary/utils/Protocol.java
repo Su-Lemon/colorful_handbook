@@ -12,7 +12,7 @@ public class Protocol {
     public static final String NEW_DIARY = "newDiary";
     public static final String AUDIO_NAME = "audioName";
     public static final String OPEN_TEXT_TYPE = "openTextType";
-    public static final String STICKER_BITMAP = "stickerBitmap";
+    public static final String STICKER_ID = "stickerID";
     public static final String IS_LOGIN = "isLogin";
     public static final String USER_NAME = "userName";
     public static final String CONTENT = "content";
@@ -69,7 +69,7 @@ public class Protocol {
     public static final String SEND_FILE = "sendFile";          //发送文件
     public static final String SEND_SUCCESS = "sendSuccess";
     public static final String SEND_FAILED = "sendFailed";
-    public static final String DIARY_NUM = "diaryNumber";
+    public static final String DIARY_INDEX = "diaryIndex";
     public static final String FILE_TYPE = "fileType";
     public  enum TypeEnum
     {

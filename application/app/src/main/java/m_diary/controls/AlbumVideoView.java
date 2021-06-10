@@ -1,13 +1,20 @@
 package m_diary.controls;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.VideoView;
+
+import com.example.myapplication.R;
+
+import m_diary.activities.DiaryActivity;
 
 public class AlbumVideoView extends VideoView implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
@@ -18,6 +25,7 @@ public class AlbumVideoView extends VideoView implements GestureDetector.OnGestu
     private boolean isHaveScrolled;
     private boolean isHaveScale;
     private float oldTwoPointerDistance;
+    private Activity main_activity;
 
     public PointF currentPosition = null;//当前的位置
     private PointF moveStartPosition = new PointF(0, 0);//手指触摸起点坐标
@@ -25,52 +33,74 @@ public class AlbumVideoView extends VideoView implements GestureDetector.OnGestu
     private boolean isMove = false;
     public int width; //视频宽度
     public int height; //视频高度
+    public boolean isDel = false;
 
 
     public AlbumVideoView(Context context) {
         super(context);
         mGestureDetector = new GestureDetector(getContext(), this);
         currentPosition = new PointF(300, 300);
+        main_activity = (Activity) context;
     }
+
     public AlbumVideoView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
+
+    private long startTime, endTime;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 //        Log.d(getClass().toString(), "onTouch: ");
         super.onTouchEvent(event);
 
-
-        if (event.getPointerCount() == 1) {
-            switch (event.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN:
-                    isMove = false;
-                    moveStartPosition.x = event.getX();
-                    moveStartPosition.y = event.getY();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    isMove = true;
-                    moveEndPosition.x = event.getX();
-                    moveEndPosition.y = event.getY();
-                    //刷新
-                    this.postInvalidate();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (isMove) {
-                        if(currentPosition == null){ currentPosition = new PointF(getLeft(), getTop()); }
-                        currentPosition.x += (moveEndPosition.x - moveStartPosition.x);
-                        currentPosition.y += (moveEndPosition.y - moveStartPosition.y);
-                        moveStartPosition.x = moveEndPosition.x;
-                        moveStartPosition.y = moveEndPosition.y;
-                        setLocation(currentPosition.x, currentPosition.y);
-                    }
-                    break;
-                default:
+        if (DiaryActivity.editable) {
+            if (event.getPointerCount() == 1) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isMove = false;
+                        moveStartPosition.x = event.getX();
+                        moveStartPosition.y = event.getY();
+                        startTime = System.currentTimeMillis();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        isMove = true;
+                        moveEndPosition.x = event.getX();
+                        moveEndPosition.y = event.getY();
+                        //刷新
+                        this.postInvalidate();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (isMove) {
+                            if (currentPosition == null) {
+                                currentPosition = new PointF(getLeft(), getTop());
+                            }
+                            currentPosition.x += (moveEndPosition.x - moveStartPosition.x);
+                            currentPosition.y += (moveEndPosition.y - moveStartPosition.y);
+                            moveStartPosition.x = moveEndPosition.x;
+                            moveStartPosition.y = moveEndPosition.y;
+                            setLocation(currentPosition.x, currentPosition.y);
+                        }else {
+                            endTime = System.currentTimeMillis();
+                            if (endTime - startTime > 1000){
+                                ((RelativeLayout) main_activity.findViewById(R.id.video_in_diary)).removeView(this);
+                                isDel = true;
+//                                for(int i = 0; i < MyVideoControl.videoViews.size(); i++){
+//                                    if(MyVideoControl.videoViews.get(i).isDel){
+//                                        MyVideoControl.videoViews.remove(i);
+//                                        break;
+//                                    }
+//                                }
+                            }
+                        }
+                        break;
+                    default:
+                }
+                return mGestureDetector.onTouchEvent(event);
+            } else if (event.getPointerCount() == 2) {
+                return onScaleEvent(event);
             }
-            return mGestureDetector.onTouchEvent(event);
-        } else if (event.getPointerCount() == 2) {
-            return onScaleEvent(event);
         }
         return false;
     }

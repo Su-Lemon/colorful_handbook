@@ -1,9 +1,5 @@
 package m_diary.activities;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.google.gson.Gson;
@@ -29,7 +28,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import m_diary.assets.Audio;
 import m_diary.assets.Diary;
@@ -85,15 +83,15 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary);
         Intent intent = getIntent();
-        totalDiaryNum = intent.getIntExtra(Protocol.DIARY_NUM, 0);
+        totalDiaryNum = intent.getIntExtra(Protocol.DIARY_INDEX, 0);
         new_Diary = intent.getBooleanExtra(Protocol.NEW_DIARY,true);
         String diaryPath = intent.getStringExtra(Protocol.DIARY_PATH);
         changed  = false;
         sendMainFile = false;
         editable = new_Diary;
-        initial_content(diaryPath);
         initial_Edit();
         initial_dialogs();
+        initial_content(diaryPath);
     }
     //初始化内容
     private void initial_content(String diaryPath){
@@ -162,8 +160,8 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
 //            diaryItem.addView(diary.texts.get(0).list.get(textNum));
 //            //diaryItem.listTvParams = diary.texts.get(0).listTvParams;
 //        }
-        while (diary.videos.size() != videoNum){
-            //重构视频
+        while (diary.pictures.size() != picNum){
+            //重构图片
             setPicture(diary.pictures.get(picNum));
             picNum++;
         }
@@ -180,18 +178,28 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
         resetNum();
     }
     //重构图片
-    public void setPicture(Picture pictures){
+    public void setPicture(Picture picture){
+        if(picture.type.equals(Sticker.PICTURE)){
+            Bitmap bitmap = BitmapFactory.decodeFile(picture.path);
+            int degree = getDegree(picture.path);
+            bitmap = rotate_ImageView(degree, bitmap); //已经处理好的图片
+            Sticker picSticker = new Sticker(DiaryActivity.this, bitmap);
+            picSticker.path = picture.path;
+            picSticker.type = Sticker.PICTURE;
+            mStickerLayout.addSticker(picSticker);
+        }else {
 
+        }
     }
     //重构视频
     public void setVideo(Video video){
         AlbumVideoView albumVideoView = new AlbumVideoView(DiaryActivity.this);
         videoControl.addVideo(video.path, albumVideoView);
-        AlbumVideoView currentView = videoControl.videoViews.get(videoControl.videoNum-1);
+        AlbumVideoView currentView = videoControl.videoViews.get(videoControl.videoViews.size()-1);
         currentView.currentPosition.x = video.x;
         currentView.currentPosition.y = video.y;
-        currentView.width = video.width;
-        currentView.height = video.height;
+        currentView.setLocation(video.x, video.y);
+        currentView.setMeasure(video.width, video.height);
     }
     //重构音频
     public void setAudio(Audio audio){
@@ -212,12 +220,12 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
         mStickerLayout.addSticker(picSticker);
         Toast.makeText(this, "添加图片!" + img_path, Toast.LENGTH_SHORT).show();
     }
-    public String video_path;
     //这里添加视频
     public void addVideo(Intent data){
-        video_path = data.getStringExtra(Protocol.VIDEO_PATH); //视频路径
+        String video_path = data.getStringExtra(Protocol.VIDEO_PATH); //视频路径
+        Uri video_uri = Uri.parse(data.getStringExtra(Protocol.VIDEO_URI));
         AlbumVideoView albumVideoView = new AlbumVideoView(DiaryActivity.this);
-        videoControl.addVideo(video_path, albumVideoView);
+        videoControl.addVideo(video_path, albumVideoView, video_uri);  //TODO
         //Toast.makeText(this, "添加视频!" + video_path, Toast.LENGTH_SHORT).show();
     }
     //这里添加音频
@@ -231,9 +239,11 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
     }
     //这里添加贴纸
     public void addSticker(Intent data){
-        Bitmap bmp = (Bitmap) (Bitmap) data.getParcelableExtra(Protocol.STICKER_BITMAP);
+        int resStickerID = data.getIntExtra(Protocol.STICKER_ID, 0);
+        Bitmap bmp = BitmapFactory.decodeResource(DiaryActivity.this.getResources(), resStickerID);
         Sticker sticker = new Sticker(DiaryActivity.this, bmp);
         sticker.type = Sticker.STICKER;
+        sticker.id = resStickerID;
         mStickerLayout.addSticker(sticker);
         Toast.makeText(this, "添加贴纸!", Toast.LENGTH_SHORT).show();
     }
@@ -260,19 +270,23 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
         //多媒体信息
         for(int i = 0; i < StickerManager.getInstance().mStickerList.size(); i++){
             Sticker currentView = StickerManager.getInstance().mStickerList.get(i);
-            Picture picture = new Picture(currentView.path, currentView.mMidPointF.x, currentView.mMidPointF.y, currentView.type);
+            Picture picture = new Picture(currentView.id, currentView.path, currentView.mMidPointF.x, currentView.mMidPointF.y, currentView.type);
             diary.pictures.add(picture);
         }
-        for(int i = 0; i < videoControl.videoNum; i++){
-            AlbumVideoView currentView = videoControl.videoViews.get(i);
-            String currentPath = videoControl.videoPath.get(i);
-            Video video = new Video(currentPath, currentView.currentPosition.x, currentView.currentPosition.y, currentView.width, currentView.height);
-            diary.videos.add(video);
+        for(int i = 0; i < videoControl.videoViews.size(); i++){
+            if (!videoControl.videoViews.get(i).isDel) {
+                AlbumVideoView currentView = videoControl.videoViews.get(i);
+                String currentPath = videoControl.videoPath.get(i);
+                Video video = new Video(currentPath, currentView.currentPosition.x, currentView.currentPosition.y, currentView.width, currentView.height);
+                diary.videos.add(video);
+            }
         }
         for(int i = 0; i < audioControl.size(); i++){
-            MyAudioControl currentView = audioControl.get(i);
-            Audio audio = new Audio(currentView.name, currentView.path, currentView.uri);
-            diary.audios.add(audio);
+            if(!audioControl.get(i).isDel) {
+                MyAudioControl currentView = audioControl.get(i);
+                Audio audio = new Audio(currentView.name, currentView.path, currentView.uri);
+                diary.audios.add(audio);
+            }
         }
 //        Text text = new Text();
 //        text.list = diaryItem.list;
@@ -455,18 +469,15 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
         else {
             if (editable) {
                 findViewById(R.id.save_edit_bt).setBackgroundResource(R.drawable.edit_bt_selector);
-                Title.setEnabled(false);
                 saveDiaryToLocal();
                 Toast.makeText(this, "日记已保存在本地!", Toast.LENGTH_SHORT).show();
                 editable = false;
             } else {
                 findViewById(R.id.save_edit_bt).setBackgroundResource(R.drawable.save_bt_selector);
-                Title.setEnabled(true);
-//                for (int i = 0;i<saveActivity.text_num;i++){
-//                    editTexts[i].setEnabled(true);
-//                }
                 editable = true;
             }
+            Title.setEnabled(editable);
+            Sub_Title.setEnabled(editable);
         }
     }
     //返回按钮
@@ -536,7 +547,10 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
     //添加文字
     public void open_text(View view){
         if(editable){
-            diaryItem.showDialog("",true);
+            diaryItem.showDialog("",true,0);
+            System.out.println(diaryItem.list);
+            System.out.println(diaryItem.listTvParams);
+            getTextInfo();
         }else{
             Toast.makeText(DiaryActivity.this, "请点击编辑按钮！", Toast.LENGTH_SHORT).show();
         }
@@ -585,6 +599,32 @@ public class DiaryActivity extends AppCompatActivity implements MyRelativeLayout
     @Override
     public void onTextViewMovingDone() {
 
+    }
+    public ArrayList<Text> getTextInfo(){
+        int num=diaryItem.listTvParams.size();
+        ArrayList<m_diary.assets.Text> texts = new ArrayList<>();
+        System.out.println("i:"+num);
+        for(int i=0;i<num;i++) {
+            m_diary.assets.Text t=new m_diary.assets.Text();
+            t.tag=diaryItem.listTvParams.get(i).getTag();
+            t.textSize=diaryItem.listTvParams.get(i).getTextSize();
+            t.midPoint=diaryItem.listTvParams.get(i).getMidPoint();
+            t.rotation=diaryItem.listTvParams.get(i).getRotation();
+            t.scale=diaryItem.listTvParams.get(i).getScale();
+            t.content=diaryItem.listTvParams.get(i).getContent();
+            t.width=diaryItem.listTvParams.get(i).getWidth();
+            t.height=diaryItem.listTvParams.get(i).getHeight();
+            t.x=diaryItem.listTvParams.get(i).getX();
+            t.y=diaryItem.listTvParams.get(i).getY();
+            t.textColor=diaryItem.listTvParams.get(i).getTextColor();
+            t.myStyle=diaryItem.listTvParams.get(i).getStyle();
+//            System.out.println(t.tag);
+//            System.out.println(t.textSize);
+//            System.out.println(t.midPoint);
+//            System.out.println(t.rotation);
+            texts.add(t);
+        }
+        return texts;
     }
     /*******************消息响应**********************/
 }

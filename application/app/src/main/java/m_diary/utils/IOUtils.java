@@ -28,4 +28,13 @@ public class IOUtils {
     public static Diary getMyDiary(String content){
         return new Gson().fromJson(content, new TypeToken<Diary>(){}.getType());
     }
+    public static boolean deleteFile(String path){
+        File diaryFile = new File(path);
+        if(diaryFile.exists()){
+            return diaryFile.delete();
+        }
+        else {
+            return false;
+        }
+    }
 }

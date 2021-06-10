@@ -13,6 +13,8 @@ import android.view.WindowManager;
 
 import com.example.myapplication.R;
 
+import m_diary.assets.StickerAttr;
+
 
 /**
  * 贴纸的基类（存放贴纸的基本的属性）
@@ -89,6 +91,16 @@ public abstract class BaseSticker implements ISupportOperation {
 
     public void setFocus(boolean focus) {
         isFocus = focus;
+    }
+
+    /**
+     * 恢复贴纸
+     */
+    public void restoreSet(StickerAttr stickerAttr){
+        this.mMatrix = stickerAttr.mMatrix;
+        this.mDstPoints = stickerAttr.mDstPoints;
+        this.mSrcPoints = stickerAttr.mSrcPoints;
+        this.mMidPointF = stickerAttr.mMidPointF;
     }
 
     /**

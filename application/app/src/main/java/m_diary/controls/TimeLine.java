@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,24 +20,25 @@ import com.example.myapplication.R;
 
 import m_diary.activities.DiaryActivity;
 import m_diary.assets.Diary;
+import m_diary.utils.IOUtils;
 import m_diary.utils.Protocol;
-
-import static m_diary.activities.MainActivity.totalDiaryNum;
+import m_diary.utils.UserManager;
 
 public class TimeLine extends ConstraintLayout {
 
     private Context context;
-    private Button  Diary_Button;
-    private ImageView Time_Line_BG;
-    private TextView Title_View;
-    private TextView Date_View;
-    private TextView Day_View;
-    private TextView Weather_View;
+    private Button  diaryButton;
+    private ImageView timeLineBG;
+    private TextView titleView;
+    private TextView dateView;
+    private TextView weekView;
+    private TextView weatherView;
     private String title;
     private String week;
     private String weather;
     private String date;
-    private Diary diary;
+    private String savePath;
+    private int index;
     private LinearLayout linearLayout;
     private DialogInterface.OnClickListener confirm;
     private DialogInterface.OnClickListener cancel;
@@ -51,6 +53,8 @@ public class TimeLine extends ConstraintLayout {
         week = diary.week;
         title = diary.title;
         weather = diary.weather;
+        savePath = diary.savePath;
+        index = diary.index;
         initial_content_View();
     }
     public TimeLine(Context context, AttributeSet attrs) {
@@ -62,27 +66,36 @@ public class TimeLine extends ConstraintLayout {
     /*******************初始化函数**********************/
     //初始化控件
     private void initial_content_View(){
-        Diary_Button = findViewById(R.id.Diary_bt);
-        Time_Line_BG = findViewById(R.id.Time_Line_BG);
-        Title_View = findViewById(R.id.Diary_Name);
-        Date_View = findViewById(R.id.Diary_Date);
-        Day_View = findViewById(R.id.Diary_Day);
-        Weather_View = findViewById(R.id.Diary_Weather);
-        initial_button_listener();
+        diaryButton = findViewById(R.id.diaryBT);
+        timeLineBG = findViewById(R.id.timeLineBG);
+        titleView = findViewById(R.id.diaryName);
+        dateView = findViewById(R.id.diaryDate);
+        weekView = findViewById(R.id.diaryWeek);
+        weatherView = findViewById(R.id.diaryWeather);
+        initialButtonListener();
         setData();
     }
     //设置控件内容
     private void setData(){
-        switch (weather){
-            case "晴" :{ Time_Line_BG.setImageResource(R.drawable.sunny); }break;
-            case "雨" :{ Time_Line_BG.setImageResource(R.drawable.rain); }break;
-            case "多云" :{ Time_Line_BG.setImageResource(R.drawable.cloudy);}break;
-            case "阴天" :{ Time_Line_BG.setImageResource(R.drawable.overcast); }break;
+        if(weather.contains("雨")){
+            timeLineBG.setImageResource(R.drawable.rain);
         }
-        Weather_View.setText(weather);
-        Title_View.setText(title);
-        Date_View.setText(date);
-        Day_View.setText(week);
+        else if(weather.contains("晴")){
+            timeLineBG.setImageResource(R.drawable.sunny);
+        }
+        else if(weather.contains("多云")){
+            timeLineBG.setImageResource(R.drawable.cloudy);
+        }
+        else if(weather.contains("阴")){
+            timeLineBG.setImageResource(R.drawable.overcast);
+        }
+        else if(weather.contains("雪")){
+
+        }
+        weatherView.setText(weather);
+        titleView.setText(title);
+        dateView.setText(date);
+        weekView.setText(week);
     }
     /*******************初始化函数**********************/
     /*******************消息响应**********************/
@@ -91,6 +104,8 @@ public class TimeLine extends ConstraintLayout {
         confirm= (arg0, arg1) -> {
             //这里删除日记
             linearLayout.removeView(TimeLine.this);
+            String diaryDirPath = Environment.getExternalStorageDirectory() + "/Diary_Data/" + UserManager.username + "/" + index;
+            IOUtils.deleteFile(diaryDirPath);
         };
         //删除日记
         delete = (dialog, which) -> {
@@ -104,19 +119,19 @@ public class TimeLine extends ConstraintLayout {
         //取消
         cancel= (arg0, arg1) -> arg0.cancel();
     }
-    private void initial_button_listener(){
-        Diary_Button.setOnClickListener(new OnClickListener() {
+    private void initialButtonListener(){
+        diaryButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityOptions compat = ActivityOptions.makeScaleUpAnimation(Diary_Button,Diary_Button.getWidth() / 2, Diary_Button.getHeight() / 2, 0, 0);
+                ActivityOptions compat = ActivityOptions.makeScaleUpAnimation(diaryButton,diaryButton.getWidth() / 2, diaryButton.getHeight() / 2, 0, 0);
                 Intent i = new Intent(context, DiaryActivity.class);
-                i.putExtra(Protocol.DIARY_PATH, diary.savePath);
-                i.putExtra(Protocol.DIARY_NUM, totalDiaryNum);
+                i.putExtra(Protocol.DIARY_PATH, savePath);
+                i.putExtra(Protocol.DIARY_INDEX, index);
                 i.putExtra(Protocol.NEW_DIARY,false);
                 context.startActivity(i,compat.toBundle());
             }
         });
-        Diary_Button.setOnLongClickListener(new OnLongClickListener() {
+        diaryButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder alert_dialog_builder = new AlertDialog.Builder(context);

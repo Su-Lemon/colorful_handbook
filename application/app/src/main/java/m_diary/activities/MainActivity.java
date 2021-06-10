@@ -1,8 +1,5 @@
 package m_diary.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
@@ -14,23 +11,22 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.example.myapplication.R;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import m_diary.assets.Diary;
@@ -52,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView weather;
     private TextView temperature;
     private TextView notice;
+    private ImageView weatherBG;
     public static Handler weatherHandler;
 
     public LinearLayout myTimeLine;
@@ -80,6 +77,21 @@ public class MainActivity extends AppCompatActivity {
                 weather.setText(Weather.weather);
                 temperature.setText(Weather.temperature);
                 notice.setText(Weather.notice);
+                if(Weather.weather.contains("雨")){
+                    weatherBG.setImageResource(R.drawable.rain);
+                }
+                else if(Weather.weather.contains("晴")){
+                    weatherBG.setImageResource(R.drawable.sunny);
+                }
+                else if(Weather.weather.contains("多云")){
+                    weatherBG.setImageResource(R.drawable.cloudy);
+                }
+                else if(Weather.weather.contains("阴")){
+                    weatherBG.setImageResource(R.drawable.overcast);
+                }
+                else if(Weather.weather.contains("雪")){
+
+                }
             }
         };
     }
@@ -93,12 +105,14 @@ public class MainActivity extends AppCompatActivity {
         myTimeLine = (LinearLayout)findViewById(R.id.ItemLayout);
         viewSwitcher = (ViewSwitcher) findViewById(R.id.mainMenuLayout);
         myScrollView = findViewById(R.id.timeLineScroll);
+        weatherBG = findViewById(R.id.Weather);
         findViewById(R.id.Menu_include).setVisibility(View.INVISIBLE);
         findViewById(R.id.Arrow_bt).setBackgroundResource(R.drawable.arrow_selector);
     }
     /*******************功能函数**********************/
     //设置时间线控件
     private void setOnTimeLine(){
+        myTimeLine.removeAllViews();
         String diaryDirPath = Environment.getExternalStorageDirectory() + "/Diary_Data/" + UserManager.username;
         File file = new File(diaryDirPath);
         int countNum = 0;
@@ -182,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityOptions compat = ActivityOptions.makeScaleUpAnimation(mImage,mImage.getWidth() / 2, mImage.getHeight() / 2, 0, 0);
         Intent i = new Intent(this,DiaryActivity.class);
         i.putExtra(Protocol.NEW_DIARY,true);
-        i.putExtra(Protocol.DIARY_NUM, totalDiaryNum);
+        i.putExtra(Protocol.DIARY_INDEX, totalDiaryNum);
         i.putExtra(Protocol.DIARY_PATH, "");
         startActivity(i,compat.toBundle());
     }

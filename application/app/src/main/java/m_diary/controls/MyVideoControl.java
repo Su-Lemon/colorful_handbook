@@ -37,8 +37,7 @@ public class MyVideoControl {
     public ArrayList<AlbumVideoView> videoViews = new ArrayList<>();
     public ArrayList<String> videoPath = new ArrayList<>();
     private MyMediaController mediaController;
-    private boolean sound_enable;
-    public int videoNum;
+//    public int videoNum;
 
     private int mVideoWidth;//视频宽度
     private int mVideoHeight;//视频高度
@@ -49,34 +48,44 @@ public class MyVideoControl {
 
     public MyVideoControl(Context context) {
         video_context = context;
-        videoNum = 0;
+//        videoNum = 0;
         Activity activity = (Activity) context;
-        rootView = activity.getWindow().getDecorView().findViewById(R.id.video_in_diary);
+        //rootView = activity.getWindow().getDecorView().findViewById(R.id.video_in_diary);
+        rootView = activity.findViewById(R.id.video_in_diary);
     }
 
-    public void addVideo(String path, AlbumVideoView newVideo){
+    public void addVideo(String path, AlbumVideoView newVideo, Uri video_uri) {
         rootView.addView(newVideo);
         videoViews.add(newVideo);
         videoPath.add(path);
-        videoNum++;
-        newVideo.setEnabled(false);
+        String video_path = UriUtils.getPath(video_context, video_uri);
+//        videoNum++;
+        displayVideo(video_path);
+    }
+
+    public void addVideo(String path, AlbumVideoView newVideo) {
+        rootView.addView(newVideo);
+        videoViews.add(newVideo);
+        videoPath.add(path);
+//        videoNum++;
         displayVideo(path);
     }
 
     /**
      * 显示视频初始化
+     *
      * @param Path
      */
     private void displayVideo(String Path) {
         if (Path != null) {
-            AlbumVideoView currentView = videoViews.get(videoNum-1);
+            AlbumVideoView currentView = videoViews.get(videoViews.size() - 1);
             currentView.setEnabled(true);
             currentView.setVideoPath(Path);
             mediaController = new MyMediaController(video_context, currentView);
-            videoViews.get(videoNum-1).setMediaController(mediaController);
+            currentView.setMediaController(mediaController);
             mediaController.setAnchorView(currentView);
+            mediaController.setMediaPlayer(currentView);
             currentView.requestFocus();
-            sound_enable = true;
             //加载视频后按比例重置视频大小
             currentView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -93,6 +102,7 @@ public class MyVideoControl {
             Toast.makeText(video_context, "Failed to get video!", Toast.LENGTH_SHORT).show();
         }
     }
+
     /**
      * 重新刷新视频显示大小，竖屏显示的大小，竖屏显示以宽度为准
      */

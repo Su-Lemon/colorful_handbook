@@ -7,8 +7,10 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,11 +31,7 @@ import com.example.myapplication.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 说明:
- * 这是个自定义布局View
- * Created by cretin on 15/12/17.
- */
+
 public class MyRelativeLayout extends RelativeLayout {
     //测试
     private ImageView iv;
@@ -45,13 +43,13 @@ public class MyRelativeLayout extends RelativeLayout {
     private TextViewParams tvParams;
 
     private EditText editText;
-    private boolean flag = false;
-    private boolean mflag = false;
+    private boolean flag ;
+    private boolean mflag ;
     private boolean onefinger;
     private boolean tvOneFinger;
 
     //记录是否为TextView上的单击事件
-    private boolean isClick = true;
+    private boolean isClick;
 
     public static final int DEFAULT_TEXTSIZE = 20;
 
@@ -68,7 +66,8 @@ public class MyRelativeLayout extends RelativeLayout {
     //用于保存创建的TextView
     public List<TextView> list;
     public List<TextViewParams> listTvParams;
-    private List<Double> listDistance;
+    public List<Double> listDistance;
+
 
     private float oldDist = 0;
     private float textSize = 0;
@@ -99,17 +98,27 @@ public class MyRelativeLayout extends RelativeLayout {
     private float currentX;
     private float currentY;
 
-    private int color;
+    public int color;
+    private int style;
+    private String colorCode;
+    private String styleCode;
+    public Typeface typeface;
     public static final int MOVE_LEFT = 6;
     public static final int MOVE_RIGHT = 7;
     public MyRelativeTouchCallBack getMyRelativeTouchCallBack() {
         return myRelativeTouchCallBack;
     }
     public void setMyRelativeTouchCallBack(MyRelativeTouchCallBack myRelativeTouchCallBack) {
+//        long firstTime = SystemClock.uptimeMillis();
+//        final MotionEvent firstEvent = MotionEvent.obtain(firstTime, firstTime, MotionEvent.ACTION_DOWN, 200, 500, 0);
+//        long secondTime = firstTime + 30;
+//        final MotionEvent secondEvent = MotionEvent.obtain(secondTime, secondTime, MotionEvent.ACTION_UP, 200, 500, 0);
+//        dispatchTouchEvent(firstEvent);
+//        dispatchTouchEvent(secondEvent);
         this.myRelativeTouchCallBack = myRelativeTouchCallBack;
     }
     //接口
-    private MyRelativeTouchCallBack myRelativeTouchCallBack;
+    public MyRelativeTouchCallBack myRelativeTouchCallBack;
     /**
      * 处理View上的单击事件 用以添加TextView
      */
@@ -124,6 +133,8 @@ public class MyRelativeLayout extends RelativeLayout {
         this.context = context;
 
         init();
+//        Toast.makeText(context, "init后！", Toast.LENGTH_SHORT).show();
+
 
 //        iv = new ImageView(context);
 //        iv.setLayoutParams(new ViewGroup.LayoutParams(20, 20));
@@ -150,7 +161,7 @@ public class MyRelativeLayout extends RelativeLayout {
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mEvent = event;
+//        mEvent = event;
         if (textSize == 0 && textView != null) {
             textSize = textView.getTextSize();
         }
@@ -266,10 +277,10 @@ public class MyRelativeLayout extends RelativeLayout {
                 Log.d("HHHH", "ACTION_UP");
                 if (onefinger) {
                     if (spacing(firstX, firstY, event.getX(), event.getY()) < 10) {
-                        showDialog("", true);
-                        //Toast.makeText(context, "这个是自定义View上的单击事件！", Toast.LENGTH_SHORT).show();
+                        showDialog("", true,0);
+                        Toast.makeText(context, "这个是自定义View上的单击事件！", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (myRelativeTouchCallBack != null) {
+//                        if (myRelativeTouchCallBack != null) {
                             if (Math.abs(firstX - event.getX()) > Math.abs(firstY - event.getY())) {
                                 if (firstX < event.getX()) {
                                     myRelativeTouchCallBack.touchMoveCallBack(MOVE_RIGHT);
@@ -277,7 +288,7 @@ public class MyRelativeLayout extends RelativeLayout {
                                     myRelativeTouchCallBack.touchMoveCallBack(MOVE_LEFT);
                                 }
                             }
-                        }
+//                        }
                     }
                 }
 
@@ -304,40 +315,119 @@ public class MyRelativeLayout extends RelativeLayout {
         list.clear();
         listTvParams.clear();
     }
-    /**
-     * 为自定义View设置背景图片 顺便隐藏VerticalSeekBar
-     *
-     * @param bitmap
-     */
+
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setBackGroundBitmap(Bitmap bitmap) {
         setBackground(new BitmapDrawable(bitmap));
     }
-    /**
-     * 添加一个TextView到界面上
-     */
-    public void addTextView(TextView tv, float x, float y, String content, int color,float mtextSize,float rotate) {
+
+    private boolean isLongPressed(float lastX,float lastY, float thisX,float thisY, long lastDownTime,long thisEventTime, long longPressTime){
+        float offsetX = Math.abs(thisX - lastX);
+        float offsetY = Math.abs(thisY - lastY);
+        long intervalTime = thisEventTime - lastDownTime;
+        if(offsetX <=10 && offsetY<=10 && intervalTime >= longPressTime){
+            return true;
+        }
+        return false;
+    }
+
+
+    //添加一个TextView到界面上
+
+    public void addTextView(TextView tv, float x, float y, String content, int colory,float mtextSize,float rotate) {
         if (tv == null) {
             if(mtextSize == 0){
-                mtextSize = DEFAULT_TEXTSIZE;
+                mtextSize = 35;
             }
             textView = new TextView(context);
-//            textView.setEms(1);
+            textView.setEms(8);
             textView.setTag(System.currentTimeMillis());
             textView.setText(content);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             textView.setLayoutParams(params);
             textView.setTextSize(mtextSize);
-            textView.setTextColor(color);
+            textView.setTextColor(colory);
             textView.setRotation(rotate);
+            switch (style){
+                case 1:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/楷体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="楷体.ttf";
+                    break;
+                case 2:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/华康中黑字体.TTF");
+                    textView.setTypeface(typeface);
+                    styleCode="华康中黑字体.TTF";
+                    break;
+                case 3:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/华康少女字体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="华康少女字体.ttf";
+                    break;
+                case 4:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/幼圆.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="幼圆.ttf";
+                    break;
+                case 5:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正卡通简体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正卡通简体.ttf";
+                    break;
+                case 6:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正古隶.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正古隶.ttf";
+                    break;
+                case 7:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正启体简体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正启体简体.ttf";
+                    break;
+                case 8:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正流行体简体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正流行体简体.ttf";
+                    break;
+                case 9:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/瘦金体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="瘦金体.ttf";
+                    break;
+                case 10:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/隶书.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="隶书.ttf";
+                    break;
+                case 11:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/华康娃娃体.TTF");
+                    textView.setTypeface(typeface);
+                    styleCode="华康娃娃体.TTF";
+                    break;
+                case 12:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/苹果丽黑.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="苹果丽黑.ttf";
+                    break;
+                case 13:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/微软雅黑14M.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="微软雅黑14M.ttf";
+                    break;
+            }
             textView.setX(x - textView.getWidth());
             textView.setY(y - textView.getHeight());
+            updateTextViewParams(textView,rotate,scale);
             textView.setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+//                    Toast.makeText(context, "addTextView后的onTouch！", Toast.LENGTH_SHORT).show();
                     textView = (TextView) v;
+                    mEvent=event;
                     switch (event.getAction() & MotionEvent.ACTION_MASK) {
                         case MotionEvent.ACTION_DOWN:
+//                            Toast.makeText(context, "1！", Toast.LENGTH_SHORT).show();
                             tvOneFinger = true;
                             isClick = true;
 
@@ -348,13 +438,21 @@ public class MyRelativeLayout extends RelativeLayout {
                             //计算当前textView的位置和大小
                             width = textView.getWidth();
                             height = textView.getHeight();
-                            if (mEvent != null) {
-                                mTv_width = mEvent.getX() - textView.getX();
-                                mTv_height = mEvent.getY() - textView.getY();
+                            if(mEvent.getX()<=(firstX+width+10)&&mEvent.getX()>=firstX-10&&mEvent.getY()<=(firstY+height+5)&&mEvent.getY()>=firstY-5){
+                                if (mEvent != null) {
+                                    mTv_width = mEvent.getX() - textView.getX();
+                                    mTv_height = mEvent.getY() - textView.getY();
+                                }
+                                mflag=true;
                             }
-                            mflag = true;
+//                            if (mEvent != null) {
+//                                mTv_width = mEvent.getX() - textView.getX();
+//                                mTv_height = mEvent.getY() - textView.getY();
+//                            }
+//                            mflag = true;
                             break;
                         case MotionEvent.ACTION_POINTER_DOWN:
+//                            Toast.makeText(context, "2！", Toast.LENGTH_SHORT).show();
                             tvOneFinger = false;
                             isClick = false;
 
@@ -373,13 +471,14 @@ public class MyRelativeLayout extends RelativeLayout {
 
                             break;
                         case MotionEvent.ACTION_MOVE:
+//                            Toast.makeText(context, "3！", Toast.LENGTH_SHORT).show();
                             //平移操作
                             if (mflag && mEvent != null) {
                                 textView.setX(mEvent.getX() - mTv_width);
                                 textView.setY(mEvent.getY() - mTv_height);
                                 //通知调用者我在平移
-                                if (myRelativeTouchCallBack != null)
-                                    myRelativeTouchCallBack.onTextViewMoving(textView);
+//                                if (myRelativeTouchCallBack != null)
+                                myRelativeTouchCallBack.onTextViewMoving(textView);
                             }
 
                             if (spacing(firstX, firstY, event.getX(), event.getY()) > 2) {
@@ -413,31 +512,37 @@ public class MyRelativeLayout extends RelativeLayout {
                                     oldDist = newDist;
                                 }
                                 //通知调用者我在旋转或者缩放
-                                if (myRelativeTouchCallBack != null)
-                                    myRelativeTouchCallBack.onTextViewMoving(textView);
+//                                if (myRelativeTouchCallBack != null)
+                                myRelativeTouchCallBack.onTextViewMoving(textView);
                             }
                             break;
                         case MotionEvent.ACTION_UP:
+//                            Toast.makeText(context, "4！", Toast.LENGTH_SHORT).show();
                             //通知调用者我滑动结束了
-                            if (myRelativeTouchCallBack != null)
-                                myRelativeTouchCallBack.onTextViewMovingDone();
+//                            if (myRelativeTouchCallBack != null)
+                            myRelativeTouchCallBack.onTextViewMovingDone();
                             mptrID1 = INVALID_POINTER_ID;
                             updateTextViewParams((TextView) v, mAngle, scale);
+//                            Toast.makeText(context, "移动结束！", Toast.LENGTH_SHORT).show();
 
                             if (tvOneFinger && isClick) {
-                                showDialog(textView.getText().toString(), false);
+                                showDialog(textView.getText().toString(), false,color);
+                                System.out.println("color:!!!!!!!!!!!!!!!!!!!"+color);
                             }
 
                             break;
                         case MotionEvent.ACTION_POINTER_UP:
+//                            Toast.makeText(context, "5！", Toast.LENGTH_SHORT).show();
                             mptrID2 = INVALID_POINTER_ID;
                             updateTextViewParams((TextView) v, mAngle, scale);
                             break;
                         case MotionEvent.ACTION_CANCEL:
+//                            Toast.makeText(context, "6！", Toast.LENGTH_SHORT).show();
                             mptrID1 = INVALID_POINTER_ID;
                             mptrID2 = INVALID_POINTER_ID;
                             break;
                     }
+//                    Toast.makeText(context, "end！", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -448,6 +553,75 @@ public class MyRelativeLayout extends RelativeLayout {
         } else {
             textView = tv;
             textView.setText(content);
+            textView.setTextColor(colory);
+            switch (style){
+                case 1:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/楷体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="楷体.ttf";
+                    break;
+                case 2:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/华康中黑字体.TTF");
+                    textView.setTypeface(typeface);
+                    styleCode="华康中黑字体.TTF";
+                    break;
+                case 3:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/华康少女字体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="华康少女字体.ttf";
+                    break;
+                case 4:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/幼圆.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="幼圆.ttf";
+                    break;
+                case 5:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正卡通简体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正卡通简体.ttf";
+                    break;
+                case 6:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正古隶.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正古隶.ttf";
+                    break;
+                case 7:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正启体简体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正启体简体.ttf";
+                    break;
+                case 8:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/方正流行体简体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="方正流行体简体.ttf";
+                    break;
+                case 9:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/瘦金体.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="瘦金体.ttf";
+                    break;
+                case 10:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/隶书.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="隶书.ttf";
+                    break;
+                case 11:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/华康娃娃体.TTF");
+                    textView.setTypeface(typeface);
+                    styleCode="华康娃娃体.TTF";
+                    break;
+                case 12:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/苹果丽黑.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="fonts/苹果丽黑.ttf";
+                    break;
+                case 13:
+                    typeface=Typeface.createFromAsset(context.getAssets(),"fonts/微软雅黑14M.ttf");
+                    textView.setTypeface(typeface);
+                    styleCode="微软雅黑14M.ttf";
+                    break;
+            }
+            updateTextViewParams(textView,rotate,scale);
         }
 
     }
@@ -472,7 +646,7 @@ public class MyRelativeLayout extends RelativeLayout {
     /**
      * 显示自定义对话框
      */
-    public void showDialog(String message, final boolean isNew) {
+    public void showDialog(String message, final boolean isNew,int mycolor) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("请输入内容:");
         View v=View.inflate(context, R.layout.activity_alert,null);
@@ -480,11 +654,96 @@ public class MyRelativeLayout extends RelativeLayout {
         builder.setCancelable(true);
         EditText editText=v.findViewById(R.id.et);
         editText.setText(message);
+        color=mycolor;
+        if(isNew) {
+            editText.setTextColor(Color.BLACK);
+        }
+        else{
+            System.out.println(color);
+            switch (color){
+                case 0:
+                    editText.setTextColor(Color.parseColor("#000000"));
+                    break;
+                case 1:
+                    editText.setTextColor(Color.parseColor("#550D01"));
+                    break;
+                case 2:
+                    editText.setTextColor(Color.parseColor("#810110"));
+                    break;
+                case 3:
+                    editText.setTextColor(Color.parseColor("#EA6D10"));
+                    break;
+                case 4:
+                    editText.setTextColor(Color.parseColor("#001B5E"));
+                    break;
+                case 5:
+                    editText.setTextColor(Color.parseColor("#033853"));
+                    break;
+                case 6:
+                    editText.setTextColor(Color.parseColor("#033510"));
+                    break;
+                case 7:
+                    editText.setTextColor(Color.parseColor("#2B055C"));
+                    break;
+                case 8:
+                    editText.setTextColor(Color.parseColor("#717073"));
+                    break;
+                case 9:
+                    editText.setTextColor(Color.parseColor("#FF6A6A"));
+                    break;
+                case 10:
+                    editText.setTextColor(Color.parseColor("#FC4B2B"));
+                    break;
+                case 11:
+                    editText.setTextColor(Color.parseColor("#FFB90F"));
+                    break;
+                case 12:
+                    editText.setTextColor(Color.parseColor("#4D97D5"));
+                    break;
+                case 13:
+                    editText.setTextColor(Color.parseColor("#196A81"));
+                    break;
+                case 14:
+                    editText.setTextColor(Color.parseColor("#3C7602"));
+                    break;
+                case 15:
+                    editText.setTextColor(Color.parseColor("#A0509D"));
+                    break;
+                case 16:
+                    editText.setTextColor(Color.parseColor("#FFFFFF"));
+                    break;
+                case 17:
+                    editText.setTextColor(Color.parseColor("#FFC1C1"));
+                    break;
+                case 18:
+                    editText.setTextColor(Color.parseColor("#FFD39B"));
+                    break;
+                case 19:
+                    editText.setTextColor(Color.parseColor("#FFF68F"));
+                    break;
+                case 20:
+                    editText.setTextColor(Color.parseColor("#B0E2FF"));
+                    break;
+                case 21:
+                    editText.setTextColor(Color.parseColor("#7AC5CD"));
+                    break;
+                case 22:
+                    editText.setTextColor(Color.parseColor("#C4E48D"));
+                    break;
+                case 23:
+                    editText.setTextColor(Color.parseColor("#FFF0F5"));
+                    break;
+
+            }
+
+        }
+//        editText.setTextColor(Color.BLACK);
         v.findViewById(R.id.blackButton).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 color=0;
                 editText.setTextColor(Color.BLACK);
+                colorCode="#000000";
             }
         });
         v.findViewById(R.id.brownButton).setOnClickListener(new OnClickListener() {
@@ -492,6 +751,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=1;
                 editText.setTextColor(Color.parseColor("#550D01"));
+                colorCode="#550D01";
             }
         });
         v.findViewById(R.id.lightredButton).setOnClickListener(new OnClickListener() {
@@ -499,6 +759,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=2;
                 editText.setTextColor(Color.parseColor("#810110"));
+                colorCode="#810110";
             }
         });
         v.findViewById(R.id.orangeButton).setOnClickListener(new OnClickListener() {
@@ -506,6 +767,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=3;
                 editText.setTextColor(Color.parseColor("#EA6D10"));
+                colorCode="#EA6D10";
             }
         });
         v.findViewById(R.id.shenlanButton).setOnClickListener(new OnClickListener() {
@@ -513,6 +775,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=4;
                 editText.setTextColor(Color.parseColor("#001B5E"));
+                colorCode="#001B5E";
             }
         });
         v.findViewById(R.id.lanlvButton).setOnClickListener(new OnClickListener() {
@@ -520,6 +783,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=5;
                 editText.setTextColor(Color.parseColor("#033853"));
+                colorCode="#033853";
             }
         });
         v.findViewById(R.id.shenlvButton).setOnClickListener(new OnClickListener() {
@@ -527,6 +791,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=6;
                 editText.setTextColor(Color.parseColor("#033510"));
+                colorCode="#033510";
             }
         });
         v.findViewById(R.id.shenziButton).setOnClickListener(new OnClickListener() {
@@ -534,6 +799,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=7;
                 editText.setTextColor(Color.parseColor("#2B055C"));
+                colorCode="#2B055C";
             }
         });
         v.findViewById(R.id.grayButton).setOnClickListener(new OnClickListener() {
@@ -541,6 +807,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=8;
                 editText.setTextColor(Color.parseColor("#717073"));
+                colorCode="#717073";
             }
         });
         v.findViewById(R.id.shenfenButton).setOnClickListener(new OnClickListener() {
@@ -548,6 +815,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=9;
                 editText.setTextColor(Color.parseColor("#FF6A6A"));
+                colorCode="#FF6A6A";
             }
         });
         v.findViewById(R.id.midredButton).setOnClickListener(new OnClickListener() {
@@ -555,6 +823,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=10;
                 editText.setTextColor(Color.parseColor("#FC4B2B"));
+                colorCode="#FC4B2B";
             }
         });
         v.findViewById(R.id.yellowButton).setOnClickListener(new OnClickListener() {
@@ -562,6 +831,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=11;
                 editText.setTextColor(Color.parseColor("#FFB90F"));
+                colorCode="#FFB90F";
             }
         });
         v.findViewById(R.id.midblueButton).setOnClickListener(new OnClickListener() {
@@ -569,6 +839,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=12;
                 editText.setTextColor(Color.parseColor("#4D97D5"));
+                colorCode="#4D97D5";
             }
         });
         v.findViewById(R.id.lan2Button).setOnClickListener(new OnClickListener() {
@@ -576,6 +847,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=13;
                 editText.setTextColor(Color.parseColor("#196A81"));
+                colorCode="#196A81";
             }
         });
         v.findViewById(R.id.caolvButton).setOnClickListener(new OnClickListener() {
@@ -583,6 +855,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=14;
                 editText.setTextColor(Color.parseColor("#3C7602"));
+                colorCode="#3C7602";
             }
         });
         v.findViewById(R.id.midpurpleButton).setOnClickListener(new OnClickListener() {
@@ -590,6 +863,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=15;
                 editText.setTextColor(Color.parseColor("#A0509D"));
+                colorCode="#A0509D";
             }
         });
         v.findViewById(R.id.whiteButton).setOnClickListener(new OnClickListener() {
@@ -597,6 +871,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=16;
                 editText.setTextColor(Color.parseColor("#FFFFFF"));
+                colorCode="#FFFFFF";
             }
         });
         v.findViewById(R.id.pinkButton).setOnClickListener(new OnClickListener() {
@@ -604,6 +879,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=17;
                 editText.setTextColor(Color.parseColor("#FFC1C1"));
+                colorCode="#FFC1C1";
             }
         });
         v.findViewById(R.id.rouseButton).setOnClickListener(new OnClickListener() {
@@ -611,6 +887,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=18;
                 editText.setTextColor(Color.parseColor("#FFD39B"));
+                colorCode="#FFD39B";
             }
         });
         v.findViewById(R.id.qianyellowButton).setOnClickListener(new OnClickListener() {
@@ -618,6 +895,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=19;
                 editText.setTextColor(Color.parseColor("#FFF68F"));
+                colorCode="#FFF68F";
             }
         });
         v.findViewById(R.id.qianlanButton).setOnClickListener(new OnClickListener() {
@@ -625,6 +903,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=20;
                 editText.setTextColor(Color.parseColor("#B0E2FF"));
+                colorCode="#B0E2FF";
             }
         });
         v.findViewById(R.id.qianlanlvButton).setOnClickListener(new OnClickListener() {
@@ -632,6 +911,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=21;
                 editText.setTextColor(Color.parseColor("#7AC5CD"));
+                colorCode="#7AC5CD";
             }
         });
         v.findViewById(R.id.qianlvButton).setOnClickListener(new OnClickListener() {
@@ -639,6 +919,7 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=22;
                 editText.setTextColor(Color.parseColor("#C4E48D"));
+                colorCode="#C4E48D";
             }
         });
         v.findViewById(R.id.qianzifenButton).setOnClickListener(new OnClickListener() {
@@ -646,6 +927,137 @@ public class MyRelativeLayout extends RelativeLayout {
             public void onClick(View v) {
                 color=23;
                 editText.setTextColor(Color.parseColor("#FFF0F5"));
+                colorCode="#FFF0F5";
+            }
+        });
+
+        v.findViewById(R.id.kaiti).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=1;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/楷体.ttf");
+                editText.setTypeface(typeface);
+                styleCode="楷体.ttf";
+            }
+        });
+
+        v.findViewById(R.id.zhonghei).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=2;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/华康中黑字体.TTF");
+                editText.setTypeface(typeface);
+                styleCode="华康中黑字体.TTF";
+            }
+        });
+
+        v.findViewById(R.id.shaonv).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=3;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/华康少女字体.ttf");
+                editText.setTypeface(typeface);
+                styleCode="华康少女字体.ttf";
+            }
+        });
+
+        v.findViewById(R.id.youyuan).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=4;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/幼圆.ttf");
+                editText.setTypeface(typeface);
+                styleCode="幼圆.ttf";
+            }
+        });
+
+        v.findViewById(R.id.katong).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=5;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/方正卡通简体.ttf");
+                editText.setTypeface(typeface);
+                styleCode="方正卡通简体.ttf";
+            }
+        });
+
+        v.findViewById(R.id.guli).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=6;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/方正古隶.ttf");
+                editText.setTypeface(typeface);
+                styleCode="方正古隶.ttf";
+            }
+        });
+
+        v.findViewById(R.id.qiti).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=7;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/方正启体简体.ttf");
+                editText.setTypeface(typeface);
+                styleCode="方正启体简体.ttf";
+            }
+        });
+
+        v.findViewById(R.id.liuxing).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=8;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/方正流行体简体.ttf");
+                editText.setTypeface(typeface);
+                styleCode="方正流行体简体.ttf";
+            }
+        });
+
+        v.findViewById(R.id.shoujin).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=9;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/瘦金体.ttf");
+                editText.setTypeface(typeface);
+                styleCode="瘦金体.ttf";
+            }
+        });
+
+        v.findViewById(R.id.lishu).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=10;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/隶书.ttf");
+                editText.setTypeface(typeface);
+                styleCode="隶书.ttf";
+            }
+        });
+
+        v.findViewById(R.id.wawati).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=11;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/华康娃娃体.TTF");
+                editText.setTypeface(typeface);
+                styleCode="华康娃娃体.TTF";
+            }
+        });
+
+        v.findViewById(R.id.pingguolihei).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=12;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/苹果丽黑.ttf");
+                editText.setTypeface(typeface);
+                styleCode="苹果丽黑.ttf";
+            }
+        });
+
+        v.findViewById(R.id.yahei).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                style=13;
+                Typeface typeface= Typeface.createFromAsset(context.getAssets(),"fonts/微软雅黑14M.ttf");
+                editText.setTypeface(typeface);
+                styleCode="微软雅黑14M.ttf";
             }
         });
 
@@ -710,152 +1122,202 @@ public class MyRelativeLayout extends RelativeLayout {
                         switch (color){
                             case 0:
                                 addTextView(null, 150, 500, content, Color.parseColor("#000000"),0,0);
+                                colorCode="#000000";
                                 break;
                             case 1:
                                 addTextView(null, 150, 500, content, Color.parseColor("#550D01"),0,0);
+                                colorCode="#550D01";
                                 break;
                             case 2:
                                 addTextView(null, 150, 500, content, Color.parseColor("#810110"),0,0);
+                                colorCode="#810110";
                                 break;
                             case 3:
                                 addTextView(null, 150, 500, content, Color.parseColor("#EA6D10"),0,0);
+                                colorCode="#EA6D10";
                                 break;
                             case 4:
                                 addTextView(null, 150, 500, content, Color.parseColor("#001B5E"),0,0);
+                                colorCode="#001B5E";
                                 break;
                             case 5:
                                 addTextView(null, 150, 500, content, Color.parseColor("#033853"),0,0);
+                                colorCode="#033853";
                                 break;
                             case 6:
                                 addTextView(null, 150, 500, content, Color.parseColor("#033510"),0,0);
+                                colorCode="#033510";
                                 break;
                             case 7:
                                 addTextView(null, 150, 500, content, Color.parseColor("#2B055C"),0,0);
+                                colorCode="#2B055C";
                                 break;
                             case 8:
                                 addTextView(null, 150, 500, content, Color.parseColor("#717073"),0,0);
+                                colorCode="#717073";
                                 break;
                             case 9:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FF6A6A"),0,0);
+                                colorCode="#FF6A6A";
                                 break;
                             case 10:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FC4B2B"),0,0);
+                                colorCode="#FC4B2B";
                                 break;
                             case 11:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FFB90F"),0,0);
+                                colorCode="#FFB90F";
                                 break;
                             case 12:
                                 addTextView(null, 150, 500, content, Color.parseColor("#4D97D5"),0,0);
+                                colorCode="#4D97D5";
                                 break;
                             case 13:
                                 addTextView(null, 150, 500, content, Color.parseColor("#196A81"),0,0);
+                                colorCode="#196A81";
                                 break;
                             case 14:
                                 addTextView(null, 150, 500, content, Color.parseColor("#3C7602"),0,0);
+                                colorCode="#3C7602";
                                 break;
                             case 15:
                                 addTextView(null, 150, 500, content, Color.parseColor("#A0509D"),0,0);
+                                colorCode="#A0509D";
                                 break;
                             case 16:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FFFFFF"),0,0);
+                                colorCode="#FFFFFF";
                                 break;
                             case 17:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FFC1C1"),0,0);
+                                colorCode="#FFC1C1";
                                 break;
                             case 18:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FFD39B"),0,0);
+                                colorCode="#FFD39B";
                                 break;
                             case 19:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FFF68F"),0,0);
+                                colorCode="#FFF68F";
                                 break;
                             case 20:
                                 addTextView(null, 150, 500, content, Color.parseColor("#B0E2FF"),0,0);
+                                colorCode="#B0E2FF";
                                 break;
                             case 21:
                                 addTextView(null, 150, 500, content, Color.parseColor("#7AC5CD"),0,0);
+                                colorCode="#7AC5CD";
                                 break;
                             case 22:
                                 addTextView(null, 150, 500, content, Color.parseColor("#C4E48D"),0,0);
+                                colorCode="#C4E48D";
                                 break;
                             case 23:
                                 addTextView(null, 150, 500, content, Color.parseColor("#FFF0F5"),0,0);
+                                colorCode="#FFF0F5";
                                 break;
 
                         }
 //                        addTextView(null, currentX, currentY, content, Color.BLACK,0,0);
                     } else {
+//                        Toast.makeText(context, "改颜色!", Toast.LENGTH_SHORT).show();
+                        System.out.println();
                         switch (color){
                             case 0:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#000000"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#000000";
                                 break;
                             case 1:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#550D01"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#550D01";
                                 break;
                             case 2:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#810110"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#810110";
                                 break;
                             case 3:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#EA6D10"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#EA6D10";
                                 break;
                             case 4:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#001B5E"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#001B5E";
                                 break;
                             case 5:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#033853"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#033853";
                                 break;
                             case 6:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#033510"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#033510";
                                 break;
                             case 7:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#2B055C"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#2B055C";
                                 break;
                             case 8:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#717073"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#717073";
                                 break;
                             case 9:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FF6A6A"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FF6A6A";
                                 break;
                             case 10:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FC4B2B"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FC4B2B";
                                 break;
                             case 11:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FFB90F"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FFB90F";
                                 break;
                             case 12:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#4D97D5"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#4D97D5";
                                 break;
                             case 13:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#196A81"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#196A81";
                                 break;
                             case 14:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#3C7602"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#3C7602";
                                 break;
                             case 15:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#A0509D"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#A0509D";
                                 break;
                             case 16:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FFFFFF"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FFFFFF";
                                 break;
                             case 17:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FFC1C1"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FFC1C1";
                                 break;
                             case 18:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FFD39B"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FFD39B";
                                 break;
                             case 19:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FFF68F"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FFF68F";
                                 break;
                             case 20:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#B0E2FF"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#B0E2FF";
                                 break;
                             case 21:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#7AC5CD"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#7AC5CD";
                                 break;
                             case 22:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#C4E48D"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#C4E48D";
                                 break;
                             case 23:
                                 addTextView(textView, textView.getX(), textView.getY(), content, Color.parseColor("#FFF0F5"),textView.getTextSize(),textView.getRotation());
+                                colorCode="#FFF0F5";
                                 break;
                         }
 //                        addTextView(textView, textView.getX(), textView.getY(), content, Color.BLACK,textView.getTextSize(),textView.getRotation());
@@ -890,7 +1352,8 @@ public class MyRelativeLayout extends RelativeLayout {
                 param.setY(tv.getY());
                 param.setTag(listTvParams.get(i).getTag());
                 param.setContent(tv.getText().toString());
-                param.setTextColor(tv.getCurrentTextColor());
+                param.setTextColor(color);
+                param.setStyle(style);
                 listTvParams.set(i, param);
                 return;
             }
@@ -916,7 +1379,8 @@ public class MyRelativeLayout extends RelativeLayout {
             tvParams.setScale(1);
             tvParams.setTag(String.valueOf((long) textView.getTag()));
             tvParams.setRotation(mAngle);
-            tvParams.setTextColor(textView.getCurrentTextColor());
+            tvParams.setTextColor(color);
+            tvParams.setStyle(style);
             listTvParams.add(tvParams);
         }
     }
@@ -1114,14 +1578,28 @@ public class MyRelativeLayout extends RelativeLayout {
         private int height;
         private float x;
         private float y;
-        private int textColor;
+        public int textColor;
+        private  String myColorr;
+        public int textStyle;
+        private String myStyle;
 
-        public int getTextColor() {
-            return textColor;
+        public String getTextColor() {
+            return myColorr;
         }
 
-        public void setTextColor(int textColor) {
-            this.textColor = textColor;
+
+        public void setTextColor(int color) {
+            textColor = color;
+            myColorr=colorCode;
+        }
+
+        public void setStyle(int style){
+            textStyle=style;
+            myStyle=styleCode;
+        }
+
+        public String getStyle(){
+            return myStyle;
         }
 
         @Override
@@ -1137,13 +1615,16 @@ public class MyRelativeLayout extends RelativeLayout {
                     ", height=" + height +
                     ", x=" + x +
                     ", y=" + y +
-                    ", textColor="+textColor+
+                    ", textColor="+myColorr+
+                    ", style="+myStyle+
                     '}';
         }
 
         public String getTag() {
             return tag;
         }
+
+        public int getColor(){ return textColor; }
 
         public void setTag(String tag) {
             this.tag = tag;

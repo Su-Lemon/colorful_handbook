@@ -8,6 +8,138 @@
     android:orientation="vertical">
 
 
+    <Button
+        android:id="@+id/yahei"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="雅黑"
+        app:layout_constraintStart_toEndOf="@+id/pingguolihei"
+        app:layout_constraintTop_toBottomOf="@+id/kaiti" />
+
+    <Button
+        android:id="@+id/pingguolihei"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="苹果丽黑"
+        app:layout_constraintStart_toEndOf="@+id/wawati"
+        app:layout_constraintTop_toBottomOf="@+id/kaiti" />
+
+    <Button
+        android:id="@+id/wawati"
+        android:layout_width="45dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="娃娃体"
+        app:layout_constraintStart_toEndOf="@+id/lishu"
+        app:layout_constraintTop_toBottomOf="@+id/kaiti" />
+
+    <Button
+        android:id="@+id/lishu"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="隶书"
+        app:layout_constraintStart_toEndOf="@+id/shoujin"
+        app:layout_constraintTop_toBottomOf="@+id/kaiti" />
+
+    <Button
+        android:id="@+id/shoujin"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="瘦金"
+        app:layout_constraintStart_toEndOf="@+id/liuxing"
+        app:layout_constraintTop_toBottomOf="@+id/kaiti" />
+
+    <Button
+        android:id="@+id/liuxing"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="流行"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/kaiti" />
+
+    <Button
+        android:id="@+id/qiti"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="启体"
+        app:layout_constraintStart_toEndOf="@+id/guli"
+        app:layout_constraintTop_toBottomOf="@+id/qianyellowButton" />
+
+    <Button
+        android:id="@+id/guli"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="古隶"
+        app:layout_constraintStart_toEndOf="@+id/katong"
+        app:layout_constraintTop_toBottomOf="@+id/qianyellowButton" />
+
+    <Button
+        android:id="@+id/katong"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="卡通"
+        app:layout_constraintStart_toEndOf="@+id/youyuan"
+        app:layout_constraintTop_toBottomOf="@+id/qianyellowButton" />
+
+    <Button
+        android:id="@+id/youyuan"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="幼圆"
+        app:layout_constraintStart_toEndOf="@+id/shaonv"
+        app:layout_constraintTop_toBottomOf="@+id/qianyellowButton" />
+
+    <Button
+        android:id="@+id/shaonv"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="少女"
+        app:layout_constraintStart_toEndOf="@+id/zhonghei"
+        app:layout_constraintTop_toBottomOf="@+id/qianyellowButton" />
+
+    <Button
+        android:id="@+id/zhonghei"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="中黑"
+        app:layout_constraintStart_toEndOf="@+id/kaiti"
+        app:layout_constraintTop_toBottomOf="@+id/pinkButton" />
+
     <ImageButton
         android:id="@+id/qianzifenButton"
         android:layout_width="35dp"
@@ -280,12 +412,11 @@
         android:layout_marginEnd="32dp"
         android:background="@android:color/transparent"
         android:hint="@string/textHint"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:inputType="text"
-        tools:ignore="Autofill">
-    </EditText>
+        tools:ignore="Autofill"></EditText>
 
     <ImageButton
         android:id="@+id/grayButton"
@@ -310,6 +441,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et"
         app:srcCompat="@drawable/c_000000_0" />
+
+    <Button
+        android:id="@+id/kaiti"
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:text="楷体"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rouseButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

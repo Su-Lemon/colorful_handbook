@@ -16,6 +16,7 @@ public class Sticker extends BaseSticker {
     private float mLastDistance;//记录上一次双指之间的距离
     public String path; //如果是图片，则有路径
     public String type; //判断是图片还是贴纸
+    public int id; //如果是贴纸，则有id
     //记录点坐标，减少对象在onTouch中的创建
     private PointF mFirstPoint = new PointF();
     private PointF mSecondPoint = new PointF();

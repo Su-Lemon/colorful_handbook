@@ -49,7 +49,7 @@ public class StickersActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     stickerBitmap = BitmapFactory.decodeResource(StickersActivity.this.getResources(), resStickerID);
-                    getStickerBitmap(stickerBitmap);
+                    getStickerBitmap(resStickerID);
                 }
             });
         }
@@ -61,16 +61,12 @@ public class StickersActivity extends AppCompatActivity {
 //        mStickerLayout.removeAllSticker();
     }
 
-    public void getStickerBitmap(Bitmap stickerBitmap) {
-        if (stickerBitmap != null) {
-            Intent i = new Intent();
-            i.putExtra(Protocol.STICKER_BITMAP, stickerBitmap);
-            i.putExtra(Protocol.CHANGED, true);
-            this.setResult(Protocol.ADD_STICKER, i);
-            finish();
-        } else {
-            Toast.makeText(this, "你没有选择任何贴纸!", Toast.LENGTH_SHORT).show();
-        }
+    public void getStickerBitmap(int resStickerID) {
+        Intent i = new Intent();
+        i.putExtra(Protocol.STICKER_ID, resStickerID);
+        i.putExtra(Protocol.CHANGED, true);
+        this.setResult(Protocol.ADD_STICKER, i);
+        finish();
     }
 
     public void back_sticker(View view) {

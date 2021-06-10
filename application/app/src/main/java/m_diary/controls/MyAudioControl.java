@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -28,8 +29,9 @@ import java.util.TimerTask;
 import m_diary.activities.DiaryActivity;
 
 //自定义音频播放控件
-public class MyAudioControl extends ConstraintLayout implements View.OnTouchListener {
+public class MyAudioControl extends ConstraintLayout {
     private Context music_context;
+    private Activity main_activity;
     private TextView sound_name;
     private TextView play_time;
     private Button play_pause_bt;
@@ -42,15 +44,16 @@ public class MyAudioControl extends ConstraintLayout implements View.OnTouchList
     public boolean sound_enable;
     public int sound_power;
     private int Duration;
-    public static int second;
-    public static int minute;
+    public int second;
+    public int minute;
     public String name;
     private SeekBar sb;
-    public static int max_min = 0;
-    public static int max_sec = 0;
+    public int max_min = 0;
+    public int max_sec = 0;
     public static final int PLAYING = 1001;
     public String uri;
     public String path;
+    public boolean isDel = false;
 
     //private RelativeLayout rootView;
     //构造函数
@@ -62,6 +65,7 @@ public class MyAudioControl extends ConstraintLayout implements View.OnTouchList
         LayoutInflater.from(context).inflate(R.layout.audio_play_layout, this,true);
         name = in_name;
         music_context = context;
+        main_activity = (Activity) music_context;
         sound_name = findViewById(R.id.Audio_Name);
         play_time = findViewById(R.id.Audio_Time);
         play_pause_bt = findViewById(R.id.Music_Play_Pause_bt);
@@ -287,22 +291,28 @@ public class MyAudioControl extends ConstraintLayout implements View.OnTouchList
         init_Listener();
     }
 
-    private long begin, end;
+    private long startTime, endTime;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:{
-                begin = System.currentTimeMillis();
-            }break;
-            case MotionEvent.ACTION_MOVE:{
-                end = System.currentTimeMillis();
-                long time = end - begin;
-                if(time>500){
-                    DiaryActivity activity = (DiaryActivity)music_context;
-                    activity.audioContent.removeView(this);
-                }
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        if (event.getPointerCount() == 1) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    startTime = System.currentTimeMillis();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    break;
+                case MotionEvent.ACTION_UP:
+                    endTime = System.currentTimeMillis();
+                    if (endTime - startTime > 500){
+                        ((LinearLayout) main_activity.findViewById(R.id.audioContent)).removeView(this);
+                        isDel = true;
+                    }
+                    break;
+                default:
             }
-            break;
+            return true;
         }
         return false;
     }

@@ -12,6 +12,7 @@ public class Diary{
         this.index = index;
         this.year = year;
         this.month = month;
+        this.day = day;
         this.week = week;
         this.weather = weather;
         texts = new ArrayList<>();

@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/Time_Line_BG"
+            android:id="@+id/timeLineBG"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
@@ -27,7 +27,7 @@
             app:srcCompat="@drawable/cloudy" />
 
         <TextView
-            android:id="@+id/Diary_Date"
+            android:id="@+id/diaryDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -36,13 +36,13 @@
             android:textColor="#0D2166"
             android:textSize="20sp"
             android:typeface="serif"
-            app:layout_constraintBottom_toBottomOf="@+id/Time_Line_BG"
+            app:layout_constraintBottom_toBottomOf="@+id/timeLineBG"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Diary_Name"
+            app:layout_constraintTop_toBottomOf="@+id/diaryName"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/Diary_Name"
+            android:id="@+id/diaryName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -51,21 +51,21 @@
             android:textColor="#0D2166"
             android:textSize="30sp"
             android:typeface="serif"
-            app:layout_constraintStart_toStartOf="@+id/Time_Line_BG"
-            app:layout_constraintTop_toTopOf="@+id/Time_Line_BG" />
+            app:layout_constraintStart_toStartOf="@+id/timeLineBG"
+            app:layout_constraintTop_toTopOf="@+id/timeLineBG" />
 
         <Button
-            android:id="@+id/Diary_bt"
+            android:id="@+id/diaryBT"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="@+id/Time_Line_BG"
-            app:layout_constraintEnd_toEndOf="@+id/Time_Line_BG"
-            app:layout_constraintStart_toStartOf="@+id/Time_Line_BG"
-            app:layout_constraintTop_toTopOf="@+id/Time_Line_BG" />
+            app:layout_constraintBottom_toBottomOf="@+id/timeLineBG"
+            app:layout_constraintEnd_toEndOf="@+id/timeLineBG"
+            app:layout_constraintStart_toStartOf="@+id/timeLineBG"
+            app:layout_constraintTop_toTopOf="@+id/timeLineBG" />
 
         <TextView
-            android:id="@+id/Diary_Day"
+            android:id="@+id/diaryWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -74,11 +74,11 @@
             android:textColor="#0D2166"
             android:textSize="20sp"
             android:typeface="serif"
-            app:layout_constraintBottom_toBottomOf="@+id/Time_Line_BG"
+            app:layout_constraintBottom_toBottomOf="@+id/timeLineBG"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/Diary_Weather"
+            android:id="@+id/diaryWeather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -86,8 +86,8 @@
             android:textColor="#0D2166"
             android:textSize="25sp"
             android:typeface="serif"
-            app:layout_constraintBottom_toBottomOf="@+id/Diary_bt"
-            app:layout_constraintEnd_toEndOf="@+id/Diary_bt" />
+            app:layout_constraintBottom_toBottomOf="@+id/diaryBT"
+            app:layout_constraintEnd_toEndOf="@+id/diaryBT" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

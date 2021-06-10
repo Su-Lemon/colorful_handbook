@@ -245,7 +245,7 @@ public class VideoActivity extends AppCompatActivity {
             stop_all();
             i.putExtra(Protocol.CHANGED, true);
             i.putExtra(Protocol.VIDEO_PATH, filePath);
-            //i.putExtra(Protocol.VIDEO_URI, video_uri.toString());
+            i.putExtra(Protocol.VIDEO_URI, video_uri.toString());
             this.setResult(Protocol.ADD_VIDEO, i);
             finish();
         }

@@ -20,6 +20,22 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/write_bg" />
 
+    <m_diary.controls.MyTextControl
+        android:id="@+id/Sub_Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="true"
+        android:gravity="center_vertical"
+        android:inputType="text"
+        android:textColor="#090000"
+        android:textSize="18sp"
+        android:typeface="sans"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Actionbar"
+        tools:visibility="visible" />
+
     <m_diary.activities.MyRelativeLayout
         android:id="@+id/Diary_Item"
         android:layout_width="match_parent"
@@ -28,25 +44,12 @@
         app:layout_constraintBottom_toTopOf="@+id/menubar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Actionbar">
+        app:layout_constraintTop_toBottomOf="@+id/Sub_Title">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="10dp">
-
-            <m_diary.controls.MyTextControl
-                android:id="@+id/Sub_Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="true"
-                android:gravity="center_vertical"
-                android:inputType="text"
-                android:textColor="#090000"
-                android:textSize="18sp"
-                android:typeface="sans"
-                android:visibility="visible"
-                tools:visibility="visible" />
 
 
             <m_diary.controls.StickerLayout
@@ -65,7 +68,7 @@
                     android:id="@+id/audioContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical" />
 
             </RelativeLayout>
 
