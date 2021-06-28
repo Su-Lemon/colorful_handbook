@@ -8,6 +8,18 @@
     android:orientation="vertical">
 
 
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="181dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/textHint"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="Autofill"></EditText>
+
     <Button
         android:id="@+id/yahei"
         android:layout_width="40dp"
@@ -67,7 +79,7 @@
         android:id="@+id/liuxing"
         android:layout_width="35dp"
         android:layout_height="30dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/transparent"
         android:text="流行"
@@ -396,7 +408,7 @@
         android:id="@+id/whiteButton"
         android:layout_width="35dp"
         android:layout_height="32dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:contentDescription="@null"
@@ -404,25 +416,11 @@
         app:layout_constraintTop_toBottomOf="@+id/grayButton"
         app:srcCompat="@drawable/c_ffffff_16" />
 
-    <EditText
-        android:id="@+id/et"
-        android:layout_width="336dp"
-        android:layout_height="181dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="32dp"
-        android:background="@android:color/transparent"
-        android:hint="@string/textHint"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="Autofill"></EditText>
-
     <ImageButton
         android:id="@+id/grayButton"
         android:layout_width="35dp"
         android:layout_height="32dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:contentDescription="@null"
@@ -434,7 +432,7 @@
         android:id="@+id/blackButton"
         android:layout_width="35dp"
         android:layout_height="32dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
         android:contentDescription="@null"
@@ -446,7 +444,7 @@
         android:id="@+id/kaiti"
         android:layout_width="35dp"
         android:layout_height="30dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="5dp"
         android:background="@android:color/transparent"
         android:text="楷体"

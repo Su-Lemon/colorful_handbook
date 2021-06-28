@@ -18,6 +18,8 @@
 
 ## 项目演示
 
+### 主要功能展示
+
 <table><tr>
 <td><img src=images/1登录.png border=0></td>
 <td><img src=images/2注册.png border=0></td>
@@ -36,6 +38,13 @@
 	<source src="images/多彩手帐.mp4" type="video/mp4">  
   您的浏览器不支持Video标签。
 </video>
+### 示例手账
+
+<table><tr>
+<td><img src=images/5-1更多示例.png border=0></td>
+<td><img src=images/5-2更多示例.png border=0></td>
+<td><img src=images/5-3更多示例.png border=0></td>
+</tr></table>
 
 ## 开发环境
 

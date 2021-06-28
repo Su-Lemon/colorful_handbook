@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/BG"
-        android:layout_width="wrap_content"
-        android:layout_height="870sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="fitXY"
@@ -28,7 +28,7 @@
         android:gravity="center_vertical"
         android:inputType="text"
         android:textColor="#090000"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:typeface="sans"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@+id/Actionbar"
         tools:visibility="visible" />
 
-    <m_diary.activities.MyRelativeLayout
+    <RelativeLayout
         android:id="@+id/Diary_Item"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -46,17 +46,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Sub_Title">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp">
-
-
-            <m_diary.controls.StickerLayout
-                android:id="@+id/stickerLayout"
+            <m_diary.controls.DiaryItemLayout
+                android:id="@+id/diaryItemLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="0dp" />
+
+            <LinearLayout
+                android:id="@+id/audioContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
             <RelativeLayout
                 android:id="@+id/video_in_diary"
@@ -64,18 +64,9 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/audioContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-
             </RelativeLayout>
 
-        </RelativeLayout>
-
-
-    </m_diary.activities.MyRelativeLayout>
+    </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/Actionbar"
@@ -89,6 +80,7 @@
             android:id="@+id/imageView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:contentDescription="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -113,13 +105,13 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:gravity="center"
-            android:hint="Title here"
+            android:hint="@string/title_here"
             android:inputType="textPersonName"
             android:maxLength="20"
             android:text=""
             android:textColor="#090000"
             android:textColorHint="#948D8D"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:typeface="serif"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
@@ -171,7 +163,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/menu_bg"
-            tools:srcCompat="@drawable/menu_bg" />
+            tools:srcCompat="@drawable/menu_bg"
+            android:contentDescription="@null" />
 
         <Button
             android:id="@+id/pic_button"

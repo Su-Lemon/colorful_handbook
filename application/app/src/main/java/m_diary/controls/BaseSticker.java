@@ -13,7 +13,8 @@ import android.view.WindowManager;
 
 import com.example.myapplication.R;
 
-import m_diary.assets.StickerAttr;
+import m_diary.activities.DiaryActivity;
+import m_diary.assets.Picture;
 
 
 /**
@@ -27,8 +28,8 @@ public abstract class BaseSticker implements ISupportOperation {
     private boolean isFocus;//当前是否聚焦
     protected int mMode;//当前模式
 
-    private float[] mSrcPoints;//矩阵变换前的点坐标
-    private float[] mDstPoints;//矩阵变换后的点坐标
+    public float[] mSrcPoints;//矩阵变换前的点坐标
+    public float[] mDstPoints;//矩阵变换后的点坐标
     private RectF mStickerBound;//贴纸范围
     private RectF mDelBound;//删除按钮范围
     public PointF mMidPointF;//贴纸中心的点坐标
@@ -96,11 +97,10 @@ public abstract class BaseSticker implements ISupportOperation {
     /**
      * 恢复贴纸
      */
-    public void restoreSet(StickerAttr stickerAttr){
-        this.mMatrix = stickerAttr.mMatrix;
-        this.mDstPoints = stickerAttr.mDstPoints;
-        this.mSrcPoints = stickerAttr.mSrcPoints;
-        this.mMidPointF = stickerAttr.mMidPointF;
+    public void restoreSet(Picture picture){
+        this.mMatrix.setValues(picture.matrix);
+        this.mSrcPoints = picture.mSrcPoints;
+        updatePoints();
     }
 
     /**

@@ -9,23 +9,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.view.View;
 
-import java.io.Serializable;
-
-import m_diary.controls.Sticker;
-import m_diary.controls.StickerLayout;
+import m_diary.controls.DiaryItemLayout;
 import m_diary.utils.Protocol;
 
 import com.example.myapplication.R;
-
-import android.os.Bundle;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.Serializable;
 
 public class StickersActivity extends AppCompatActivity {
     private DialogInterface.OnClickListener confirm;
@@ -33,7 +22,7 @@ public class StickersActivity extends AppCompatActivity {
 
     public int stickerSrcNum = 16;
     Bitmap stickerBitmap = null;
-    private StickerLayout mStickerLayout;
+    private DiaryItemLayout mDiaryItemLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

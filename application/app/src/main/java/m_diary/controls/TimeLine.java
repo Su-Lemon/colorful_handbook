@@ -4,13 +4,14 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Environment;
+import android.provider.SyncStateContract;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
@@ -19,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.myapplication.R;
 
 import m_diary.activities.DiaryActivity;
+import m_diary.activities.MainActivity;
 import m_diary.assets.Diary;
 import m_diary.utils.IOUtils;
 import m_diary.utils.Protocol;
@@ -28,7 +30,7 @@ public class TimeLine extends ConstraintLayout {
 
     private Context context;
     private Button  diaryButton;
-    private ImageView timeLineBG;
+    private ImageView weatherTag;
     private TextView titleView;
     private TextView dateView;
     private TextView weekView;
@@ -39,7 +41,6 @@ public class TimeLine extends ConstraintLayout {
     private String date;
     private String savePath;
     private int index;
-    private LinearLayout linearLayout;
     private DialogInterface.OnClickListener confirm;
     private DialogInterface.OnClickListener cancel;
     private DialogInterface.OnClickListener delete;
@@ -67,30 +68,35 @@ public class TimeLine extends ConstraintLayout {
     //初始化控件
     private void initial_content_View(){
         diaryButton = findViewById(R.id.diaryBT);
-        timeLineBG = findViewById(R.id.timeLineBG);
+        weatherTag = findViewById(R.id.weatherTag);
         titleView = findViewById(R.id.diaryName);
         dateView = findViewById(R.id.diaryDate);
         weekView = findViewById(R.id.diaryWeek);
         weatherView = findViewById(R.id.diaryWeather);
+        Typeface typeface = Typeface.createFromAsset(context.getAssets(),"fonts/华康少女字体.ttf");
+        titleView.setTypeface(typeface);
+        dateView.setTypeface(typeface);
+        weekView.setTypeface(typeface);
+        weatherView.setTypeface(typeface);
         initialButtonListener();
         setData();
     }
     //设置控件内容
     private void setData(){
         if(weather.contains("雨")){
-            timeLineBG.setImageResource(R.drawable.rain);
+            weatherTag.setImageResource(R.drawable.rain);
         }
         else if(weather.contains("晴")){
-            timeLineBG.setImageResource(R.drawable.sunny);
+            weatherTag.setImageResource(R.drawable.sunny);
         }
         else if(weather.contains("多云")){
-            timeLineBG.setImageResource(R.drawable.cloudy);
+            weatherTag.setImageResource(R.drawable.cloudy);
         }
         else if(weather.contains("阴")){
-            timeLineBG.setImageResource(R.drawable.overcast);
+            weatherTag.setImageResource(R.drawable.overcast);
         }
         else if(weather.contains("雪")){
-
+            weatherTag.setImageResource(R.drawable.snow);
         }
         weatherView.setText(weather);
         titleView.setText(title);
@@ -103,7 +109,8 @@ public class TimeLine extends ConstraintLayout {
         //确定按钮
         confirm= (arg0, arg1) -> {
             //这里删除日记
-            linearLayout.removeView(TimeLine.this);
+            MainActivity mainActivity = (MainActivity)context;
+            mainActivity.myTimeLine.removeView(TimeLine.this);
             String diaryDirPath = Environment.getExternalStorageDirectory() + "/Diary_Data/" + UserManager.username + "/" + index;
             IOUtils.deleteFile(diaryDirPath);
         };

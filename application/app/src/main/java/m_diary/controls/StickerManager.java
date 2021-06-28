@@ -45,7 +45,6 @@ public class StickerManager {
             bitmap.recycle();
         }
         mStickerList.remove(sticker);
-
     }
 
     /**

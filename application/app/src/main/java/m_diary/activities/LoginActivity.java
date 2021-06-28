@@ -100,9 +100,15 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "用户名或密码不能为空！", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        String md5Psw = MD5Utils.md5(psw);
-                        User user = new User(Protocol.LOGIN, userName, md5Psw);
-                        UserManager.getUserManager().login(LoginActivity.this, user);
+                        if(!SocketClient.getSocketClient().connectToServer()) {
+                            //TODO 临时本地登录
+                            Toast.makeText(LoginActivity.this, "服务器连接失败！临时本地登录", Toast.LENGTH_SHORT).show();
+                            localLogin();
+                        }else {
+                            String md5Psw = MD5Utils.md5(psw);
+                            User user = new User(Protocol.LOGIN, userName, md5Psw);
+                            UserManager.getUserManager().login(LoginActivity.this, user);
+                        }
                     }
                 }
                 else{
@@ -112,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     /**
-     *从SharedPreferences中根据用户名读取密码
+     *
      */
     public void login(String result){
         Looper.prepare();
@@ -145,6 +151,65 @@ public class LoginActivity extends AppCompatActivity {
             }
             break;
         }
+    }
+
+    /**
+     *从SharedPreferences中根据用户名读取密码 //TODO
+     */
+    private void localLogin(){
+        //开始登录，获取用户名和密码
+        userName = et_user_name.getText().toString().trim();
+        psw = et_psw.getText().toString().trim();
+        //对当前用户输入的密码进行MD5加密再进行比对判断
+        String md5Psw = MD5Utils.md5(psw);
+        //spPsw是从SharedPreferences中根据用户名获取的密码
+        spPsw = readPsw(userName);
+        if (TextUtils.isEmpty(userName)) {
+            Toast.makeText(LoginActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty(psw)) {
+            Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
+            //输入的密码加密后，是否与保存在SharedPreferences中一致
+        } else if (md5Psw.equals(spPsw)) {
+            //一致登录成功
+            Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+            //保存登录状态，在界面保存登录的用户名
+            saveLoginStatus(true, userName);
+
+            //登录成功后关闭此页面进入主页
+            Intent data = new Intent();
+            data.putExtra("isLogin", true);
+            //RESULT_OK为Activity系统常量，状态码为-1，表示此页面下的内容操作成功将data返回到上一页面
+            setResult(RESULT_OK, data);
+            LoginActivity.this.finish();
+            //跳转到主界面，登录成功的状态传递到 MainActivity 中
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        } else if ((spPsw != null && !TextUtils.isEmpty(spPsw) && !md5Psw.equals(spPsw))) {
+            Toast.makeText(LoginActivity.this, "输入的用户名和密码不一致", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(LoginActivity.this, "此用户名不存在", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     *从SharedPreferences中根据用户名读取密码
+     */
+    private String readPsw(String userName){
+        SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
+        return sp.getString(userName , "");
+    }
+
+    /**
+     *保存登录状态和登录用户名到SharedPreferences中
+     */
+    private void saveLoginStatus(boolean status,String userName){
+        SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
+        SharedPreferences.Editor editor=sp.edit();
+        //存入boolean类型的登录状态
+        editor.putBoolean("isLogin", status);
+        //存入登录状态时的用户名
+        editor.putString("loginUserName", userName);
+        //提交修改
+        editor.apply();
     }
 
     /**

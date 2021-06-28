@@ -10,11 +10,11 @@
 
     <ImageView
         android:id="@+id/BG"
-        android:layout_width="wrap_content"
-        android:layout_height="870sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY"
         android:contentDescription="@null"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
-            android:layout_height="680sp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             <ImageView
                 android:id="@+id/TimeLine"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginStart="64dp"
                 android:contentDescription="@null"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -57,8 +57,8 @@
             <ScrollView
                 android:id="@+id/timeLineScroll"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -74,14 +74,15 @@
                         android:id="@+id/showLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        tools:ignore="UselessParent">
 
                         <LinearLayout
                             android:id="@+id/ItemLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="68dp"
-                            android:orientation="vertical"></LinearLayout>
+                            android:layout_marginStart="68dp"
+                            android:orientation="vertical" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
@@ -97,10 +98,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0">
 
-
             <ImageView
-                android:id="@+id/Weather"
-                android:layout_width="439dp"
+                android:id="@+id/weatherBG"
+                android:layout_width="match_parent"
                 android:layout_height="158dp"
                 android:contentDescription="@null"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -108,6 +108,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/weather_bg" />
+
+            <ImageView
+                android:id="@+id/weatherTag"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/Week"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/sunny" />
 
             <ImageView

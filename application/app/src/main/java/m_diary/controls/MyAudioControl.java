@@ -27,6 +27,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import m_diary.activities.DiaryActivity;
+import m_diary.utils.IOUtils;
 
 //自定义音频播放控件
 public class MyAudioControl extends ConstraintLayout {
@@ -308,6 +309,7 @@ public class MyAudioControl extends ConstraintLayout {
                     if (endTime - startTime > 500){
                         ((LinearLayout) main_activity.findViewById(R.id.audioContent)).removeView(this);
                         isDel = true;
+                        IOUtils.deleteFile(path);
                     }
                     break;
                 default:

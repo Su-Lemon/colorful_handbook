@@ -35,9 +35,7 @@ import m_diary.utils.UriUtils;
 public class MyVideoControl {
     private Context video_context;
     public ArrayList<AlbumVideoView> videoViews = new ArrayList<>();
-    public ArrayList<String> videoPath = new ArrayList<>();
     private MyMediaController mediaController;
-//    public int videoNum;
 
     private int mVideoWidth;//视频宽度
     private int mVideoHeight;//视频高度
@@ -48,26 +46,27 @@ public class MyVideoControl {
 
     public MyVideoControl(Context context) {
         video_context = context;
-//        videoNum = 0;
         Activity activity = (Activity) context;
-        //rootView = activity.getWindow().getDecorView().findViewById(R.id.video_in_diary);
         rootView = activity.findViewById(R.id.video_in_diary);
     }
 
     public void addVideo(String path, AlbumVideoView newVideo, Uri video_uri) {
+        newVideo.path = path;
         rootView.addView(newVideo);
         videoViews.add(newVideo);
-        videoPath.add(path);
         String video_path = UriUtils.getPath(video_context, video_uri);
-//        videoNum++;
         displayVideo(video_path);
     }
-
+    //删除所有视频
+    public void removeAll(){
+        rootView.removeAllViews();
+        videoViews.clear();
+    }
+    //添加视频
     public void addVideo(String path, AlbumVideoView newVideo) {
+        newVideo.path = path;
         rootView.addView(newVideo);
         videoViews.add(newVideo);
-        videoPath.add(path);
-//        videoNum++;
         displayVideo(path);
     }
 

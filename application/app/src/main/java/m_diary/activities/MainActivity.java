@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView weather;
     private TextView temperature;
     private TextView notice;
-    private ImageView weatherBG;
+    private ImageView weatherTag;
     public static Handler weatherHandler;
 
     public LinearLayout myTimeLine;
@@ -78,25 +79,26 @@ public class MainActivity extends AppCompatActivity {
                 temperature.setText(Weather.temperature);
                 notice.setText(Weather.notice);
                 if(Weather.weather.contains("雨")){
-                    weatherBG.setImageResource(R.drawable.rain);
+                    weatherTag.setImageResource(R.drawable.rain);
                 }
                 else if(Weather.weather.contains("晴")){
-                    weatherBG.setImageResource(R.drawable.sunny);
+                    weatherTag.setImageResource(R.drawable.sunny);
                 }
                 else if(Weather.weather.contains("多云")){
-                    weatherBG.setImageResource(R.drawable.cloudy);
+                    weatherTag.setImageResource(R.drawable.cloudy);
                 }
                 else if(Weather.weather.contains("阴")){
-                    weatherBG.setImageResource(R.drawable.overcast);
+                    weatherTag.setImageResource(R.drawable.overcast);
                 }
                 else if(Weather.weather.contains("雪")){
-
+                    weatherTag.setImageResource(R.drawable.snow);
                 }
             }
         };
     }
     //初始化控件
     private void initViews(){
+        TextView location = findViewById(R.id.Location);
         date = (TextView)findViewById(R.id.Date);
         week = (TextView)findViewById(R.id.Week);
         weather = (TextView)findViewById(R.id.WeatherText);
@@ -105,7 +107,13 @@ public class MainActivity extends AppCompatActivity {
         myTimeLine = (LinearLayout)findViewById(R.id.ItemLayout);
         viewSwitcher = (ViewSwitcher) findViewById(R.id.mainMenuLayout);
         myScrollView = findViewById(R.id.timeLineScroll);
-        weatherBG = findViewById(R.id.Weather);
+        weatherTag = findViewById(R.id.weatherTag);
+        Typeface typeface = Typeface.createFromAsset(MainActivity.this.getAssets(),"fonts/华康少女字体.ttf");
+        location.setTypeface(typeface);
+        date.setTypeface(typeface);
+        week.setTypeface(typeface);
+        weather.setTypeface(typeface);
+        notice.setTypeface(typeface);
         findViewById(R.id.Menu_include).setVisibility(View.INVISIBLE);
         findViewById(R.id.Arrow_bt).setBackgroundResource(R.drawable.arrow_selector);
     }
@@ -124,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                     String diaryPath = diaryDirPath + "/" + countNum + "/MainFile";
                     String content = IOUtils.readFile(diaryPath);
                     if(content.equals("")){
-                        return;
+                        continue;
                     }
                     diaryContents.add(content);
                     countNum++;

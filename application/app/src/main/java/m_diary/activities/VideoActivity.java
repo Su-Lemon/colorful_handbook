@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import m_diary.utils.IOUtils;
 import m_diary.utils.Protocol;
 import m_diary.utils.UriUtils;
 import m_diary.utils.UserManager;
@@ -91,7 +92,11 @@ public class VideoActivity extends AppCompatActivity {
         }catch (IOException e){
             e.printStackTrace();
         }
+        if (shoot_video) {
+            IOUtils.deleteFile(filePath);
+        }
         filePath = save_File_Name;
+        video_uri = Uri.fromFile(new File(filePath));
     }
     //打开相册
     private void openAlbum() {
@@ -239,9 +244,7 @@ public class VideoActivity extends AppCompatActivity {
         //to do:add your media
         if(open_video||shoot_video) {
             Intent i = new Intent();
-            if (open_video) {
-                copy_Video(filePath);
-            }
+            copy_Video(filePath);
             stop_all();
             i.putExtra(Protocol.CHANGED, true);
             i.putExtra(Protocol.VIDEO_PATH, filePath);

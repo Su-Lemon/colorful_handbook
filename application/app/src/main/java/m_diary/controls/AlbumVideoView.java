@@ -15,6 +15,7 @@ import android.widget.VideoView;
 import com.example.myapplication.R;
 
 import m_diary.activities.DiaryActivity;
+import m_diary.utils.IOUtils;
 
 public class AlbumVideoView extends VideoView implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
@@ -26,6 +27,7 @@ public class AlbumVideoView extends VideoView implements GestureDetector.OnGestu
     private boolean isHaveScale;
     private float oldTwoPointerDistance;
     private Activity main_activity;
+    public String path;
 
     public PointF currentPosition = null;//当前的位置
     private PointF moveStartPosition = new PointF(0, 0);//手指触摸起点坐标
@@ -54,8 +56,8 @@ public class AlbumVideoView extends VideoView implements GestureDetector.OnGestu
     public boolean onTouchEvent(MotionEvent event) {
 //        Log.d(getClass().toString(), "onTouch: ");
         super.onTouchEvent(event);
-
         if (DiaryActivity.editable) {
+            DiaryActivity.changed = true;
             if (event.getPointerCount() == 1) {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -86,12 +88,7 @@ public class AlbumVideoView extends VideoView implements GestureDetector.OnGestu
                             if (endTime - startTime > 1000){
                                 ((RelativeLayout) main_activity.findViewById(R.id.video_in_diary)).removeView(this);
                                 isDel = true;
-//                                for(int i = 0; i < MyVideoControl.videoViews.size(); i++){
-//                                    if(MyVideoControl.videoViews.get(i).isDel){
-//                                        MyVideoControl.videoViews.remove(i);
-//                                        break;
-//                                    }
-//                                }
+                                IOUtils.deleteFile(path);
                             }
                         }
                         break;
@@ -238,6 +235,7 @@ public class AlbumVideoView extends VideoView implements GestureDetector.OnGestu
     public void setMeasure(int width, int height) {
         this.width = width;
         this.height = height;
+        setMeasuredDimension(width, height);
     }
 
 

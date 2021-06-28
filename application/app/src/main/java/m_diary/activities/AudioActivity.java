@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import m_diary.utils.IOUtils;
 import m_diary.utils.Protocol;
 import m_diary.utils.UriUtils;
 import m_diary.utils.UserManager;
@@ -393,7 +394,11 @@ public class AudioActivity extends AppCompatActivity {
         }catch (IOException e){
             e.printStackTrace();
         }
+        if (record_audio) {
+            IOUtils.deleteFile(filePath);
+        }
         filePath = save_File_Name;
+        audio_uri = Uri.fromFile(new File(filePath));
     }
     //打开相册
     private void openAlbum(){
@@ -409,7 +414,7 @@ public class AudioActivity extends AppCompatActivity {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("audio/*");
         if(record_audio && !opened_audio){
-            delete_record_audio();
+            IOUtils.deleteFile(filePath);
         }
         startActivityForResult(intent, Protocol.CHOOSE_AUDIO); // 打开相册
     }
@@ -498,7 +503,7 @@ public class AudioActivity extends AppCompatActivity {
             i.putExtra(Protocol.CHANGED, false);
             AudioActivity.this.setResult(Protocol.ADD_AUDIO,i);
             if(record_audio && !opened_audio){
-                delete_record_audio();
+                IOUtils.deleteFile(filePath);
             }
             finish();
         };
@@ -533,9 +538,7 @@ public class AudioActivity extends AppCompatActivity {
         //to do:add your media
         if(opened_audio||record_audio) {
             Intent i = new Intent();
-            if (opened_audio) {
-                copy_Audio(filePath);
-            }
+            copy_Audio(filePath);
             if (filePath == null) {
                 filePath = "";
             }

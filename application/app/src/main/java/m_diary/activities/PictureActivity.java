@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import m_diary.utils.IOUtils;
 import m_diary.utils.Protocol;
 import m_diary.utils.UserManager;
 
@@ -98,7 +99,7 @@ public class PictureActivity extends AppCompatActivity {
     }
     //将用户打开图片复制到存储文件夹下
     public void copy_Bitmap(String from_File){
-        String save_File_Name = getExternalFilesDir(null).getAbsolutePath() + "/Diary_Data/" + UserManager.username + "/" + diary.index + "/Audio/" + System.currentTimeMillis();
+        String save_File_Name = getExternalFilesDir(null).getAbsolutePath() + "/Diary_Data/" + UserManager.username + "/" + diary.index + "/Picture/" + System.currentTimeMillis();
         File save_File = new File(save_File_Name);
         if (!save_File.getParentFile().exists()) {
             save_File.getParentFile().mkdirs();
@@ -118,6 +119,9 @@ public class PictureActivity extends AppCompatActivity {
             outputStream.close();
         }catch (IOException e){
             e.printStackTrace();
+        }
+        if (taken_photo) {
+            IOUtils.deleteFile(filePath);
         }
         filePath = save_File_Name;
     }
@@ -263,9 +267,7 @@ public class PictureActivity extends AppCompatActivity {
         //to do:add your media
         if(opened_photo||taken_photo) {
             Intent i = new Intent();
-            if (opened_photo) {
-                copy_Bitmap(filePath);
-            }
+            copy_Bitmap(filePath);
             i.putExtra(Protocol.IMG_PATH, filePath);
             i.putExtra(Protocol.CHANGED, true);
             this.setResult(Protocol.ADD_PICTURE, i);

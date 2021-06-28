@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
+import m_diary.activities.DiaryActivity;
+import m_diary.assets.Diary;
+
 /**
  * 贴纸类（手势与贴纸的关系）
  */
@@ -68,49 +71,52 @@ public class Sticker extends BaseSticker {
      * @param event
      */
     public void onTouch(MotionEvent event) {
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                //有触摸到贴纸
-                mMode = Sticker.MODE_SINGLE;
-                //记录按下的位置
-                mLastSinglePoint.set(event.getX(), event.getY());
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                if (event.getPointerCount() == 2) {
-                    mMode = Sticker.MODE_MULTIPLE;
-                    //记录双指的点位置
-                    mFirstPoint.set(event.getX(0), event.getY(0));
-                    mSecondPoint.set(event.getX(1), event.getY(1));
-                    //计算双指之间向量
-                    mLastDistanceVector.set(mFirstPoint.x - mSecondPoint.x, mFirstPoint.y - mSecondPoint.y);
-                    //计算双指之间距离
-                    mLastDistance = calculateDistance(mFirstPoint, mSecondPoint);
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (mMode == MODE_SINGLE) {
-                    translate(event.getX() - mLastSinglePoint.x, event.getY() - mLastSinglePoint.y);
+        if(DiaryActivity.editable) {
+            DiaryActivity.changed = true;
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    //有触摸到贴纸
+                    mMode = Sticker.MODE_SINGLE;
+                    //记录按下的位置
                     mLastSinglePoint.set(event.getX(), event.getY());
-                }
-                if (mMode == MODE_MULTIPLE && event.getPointerCount() == 2) {
-                    //记录双指的点位置
-                    mFirstPoint.set(event.getX(0), event.getY(0));
-                    mSecondPoint.set(event.getX(1), event.getY(1));
-                    //操作自由缩放
-                    float distance = calculateDistance(mFirstPoint, mSecondPoint);
-                    //根据双指移动的距离获取缩放因子
-                    float scale = distance / mLastDistance;
-                    scale(scale, scale);
-                    mLastDistance = distance;
-                    //操作自由旋转
-                    mDistanceVector.set(mFirstPoint.x - mSecondPoint.x, mFirstPoint.y - mSecondPoint.y);
-                    rotate(calculateDegrees(mLastDistanceVector, mDistanceVector));
-                    mLastDistanceVector.set(mDistanceVector.x, mDistanceVector.y);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                reset();
-                break;
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    if (event.getPointerCount() == 2) {
+                        mMode = Sticker.MODE_MULTIPLE;
+                        //记录双指的点位置
+                        mFirstPoint.set(event.getX(0), event.getY(0));
+                        mSecondPoint.set(event.getX(1), event.getY(1));
+                        //计算双指之间向量
+                        mLastDistanceVector.set(mFirstPoint.x - mSecondPoint.x, mFirstPoint.y - mSecondPoint.y);
+                        //计算双指之间距离
+                        mLastDistance = calculateDistance(mFirstPoint, mSecondPoint);
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (mMode == MODE_SINGLE) {
+                        translate(event.getX() - mLastSinglePoint.x, event.getY() - mLastSinglePoint.y);
+                        mLastSinglePoint.set(event.getX(), event.getY());
+                    }
+                    if (mMode == MODE_MULTIPLE && event.getPointerCount() == 2) {
+                        //记录双指的点位置
+                        mFirstPoint.set(event.getX(0), event.getY(0));
+                        mSecondPoint.set(event.getX(1), event.getY(1));
+                        //操作自由缩放
+                        float distance = calculateDistance(mFirstPoint, mSecondPoint);
+                        //根据双指移动的距离获取缩放因子
+                        float scale = distance / mLastDistance;
+                        scale(scale, scale);
+                        mLastDistance = distance;
+                        //操作自由旋转
+                        mDistanceVector.set(mFirstPoint.x - mSecondPoint.x, mFirstPoint.y - mSecondPoint.y);
+                        rotate(calculateDegrees(mLastDistanceVector, mDistanceVector));
+                        mLastDistanceVector.set(mDistanceVector.x, mDistanceVector.y);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    reset();
+                    break;
+            }
         }
     }
 

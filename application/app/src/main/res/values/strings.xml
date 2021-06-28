@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Diary</string>
+    <string name="app_name">多彩手账</string>
     <string name="city">西安</string>
     <string name="date">2021年1月1日</string>
     <string name="day">星期五</string>
@@ -12,8 +12,8 @@
     <string name="login_loginbtn_text">登 录</string>
     <string name="login_registbtn_text">立即注册</string>
     <string name="login_forgetpsw_text">找回密码?</string>
-    <string name="login_welcome_text">Welcome！</string>
-    <string name="login_description_text">欢迎进入多彩手账，打开你的奇妙之旅</string>
+    <string name="login_welcome_text">欢迎！</string>
+    <string name="login_description_text" translatable="false">欢迎进入多彩手账，打开你的奇妙之旅</string>
     <string name="login_other_account_text">第三方账号登录</string>
     <string name="register_btn_text">注 册</string>
     <string name="register_phone_text">请输入手机号码</string>

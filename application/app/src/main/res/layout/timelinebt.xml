@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="250dp">
+    android:layout_height="220dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/Time_Line_Content"
@@ -24,7 +24,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/cloudy" />
+            app:srcCompat="@drawable/weather_bg" />
+
+        <ImageView
+            android:id="@+id/weatherTag"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="@+id/timeLineBG"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/diaryWeek"
+            app:layout_constraintTop_toTopOf="@+id/timeLineBG"
+            app:srcCompat="@drawable/sunny" />
 
         <TextView
             android:id="@+id/diaryDate"
